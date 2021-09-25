@@ -43,7 +43,7 @@ class Man:
     def eat(self):
         if self.house.food >= 10:
             print('{} поел'.format(self.name))
-            self.fullness += 10
+            self.fullness += 30
             self.house.food -= 10
         else:
             cprint('{} нет еды'.format(self.name), color='red')
@@ -70,6 +70,8 @@ class Man:
             cprint('{} умер...'.format(self.name), color='red')
             return
         dice = randint(1, 6)
+        if self.house.dirt >= 100:
+            self.clean_the_house()
         if self.fullness < 20:
             self.eat()
         if self.house.pug_food <= 20:
@@ -90,17 +92,22 @@ class Man:
         cprint('{} заехал в дом!!!!'.format(self.name), color='cyan')
         self.fullness -= 10
 
-    def pick_up_the_pug(self, house):
+    def pick_up_the_pug(self, house, name):
         global pug
-        pug = Pug(house, name='Леонид Васильевич')
+        pug = Pug(house, name)
         cprint('{} взял мопса в дом!!!!'.format(self.name), color='red')
         self.fullness -= 10
 
     def buy_food_for_pug(self):
         if self.house.money >= 50:
-            cprint('{} сходил в магазин за камушками Леониду Васильвичу'.format(self.name), color='magenta')
+            cprint('{} сходил в магазин за камушками Леониду Васильевичу'.format(self.name), color='magenta')
             self.house.money -= 50
             self.house.pug_food += 50
+
+    def clean_the_house(self):
+        cprint('{} убрался в доме..'.format(self.name), color='magenta')
+        self.house.dirt -= 100
+        self.fullness -= 10
 
 
 class House:
@@ -178,7 +185,7 @@ class Pug:
 vasya = Man(name='Вася')
 my_sweet_home = House()
 vasya.move_into_the_house(house=my_sweet_home)
-vasya.pick_up_the_pug(house=my_sweet_home)
+vasya.pick_up_the_pug(house=my_sweet_home, name=input())
 vasya.buy_food_for_pug()
 
 for day in range(1, 365):
