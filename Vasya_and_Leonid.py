@@ -3,7 +3,6 @@
 from random import randint
 from termcolor import cprint
 
-
 # Доработать практическую часть урока lesson_007/python_snippets/08_practice.py
 
 # Необходимо создать класс кота. У кота есть аттрибуты - сытость и дом (в котором он живет).
@@ -28,6 +27,7 @@ from termcolor import cprint
 # Человеку и коту надо вместе прожить 365 дней.
 
 # TODO здесь ваш код
+global pug
 
 
 class Man:
@@ -46,14 +46,14 @@ class Man:
             self.fullness += 10
             self.house.food -= 10
         else:
-            print('{} нет еды'.format(self.name), color='red')
+            cprint('{} нет еды'.format(self.name), color='red')
 
     def work(self):
         cprint('{} сходил на работу'.format(self.name), color='grey')
-        self.house.money += 50
+        self.house.money += 150
         self.fullness -= 10
 
-    def play_F1_2021(self):
+    def play_f1_2021(self):
         cprint('{} играл в F1 2021 целый день на XBOX'.format(self.name), color='green')
         self.fullness -= 10
 
@@ -63,11 +63,11 @@ class Man:
             self.house.money -= 50
             self.house.food += 50
         else:
-            print('{} деньги кончились!'.format(self.name), color='red')
+            cprint('{} деньги кончились!'.format(self.name), color='red')
 
     def act(self):
         if self.fullness <= 0:
-            print('{} умер...'.format(self.name), color='red')
+            cprint('{} умер...'.format(self.name), color='red')
             return
         dice = randint(1, 6)
         if self.fullness < 20:
@@ -81,32 +81,107 @@ class Man:
         elif dice == 2:
             self.eat()
         else:
-            self.play_F1_2021()
+            self.play_f1_2021()
 
     def move_into_the_house(self, house):
         self.house = house
         cprint('{} заехал в дом!!!!'.format(self.name), color='cyan')
         self.fullness -= 10
 
+    def pick_up_the_pug(self, house):
+        global pug
+        pug = Pug(house, name='Леонид Васильевич')
+        cprint('{} взял мопса в дом!!!!'.format(self.name), color='red')
+        self.fullness -= 10
+
+    def buy_food_for_pug(self):
+        if self.house.money >= 50:
+            cprint('{} сходил в магазин за камушками Леониду Васильвичу'.format(self.name), color='magenta')
+            self.house.money -= 50
+            self.house.pug_food += 50
+
 
 class House:
     def __init__(self):
         self.food = 20
         self.money = 50
+        self.pug_food = 0
+        self.dirt = 1
 
     def __str__(self):
-        return 'В доме еды осталось {}, денег осталось {}'.format(self.food, self.money)
+        return 'В доме еды осталось {}, денег осталось {}, камушков для мопса {}, загрязненность в доме {}'.format(
+            self.food, self.money, self.pug_food, self.dirt)
+
+
+class Pug:
+    def __init__(self, house, name):
+        self.name = name
+        self.fullness = 40
+        self.house = house
+
+    def __str__(self):
+        return 'Я - мопс {}, сытость {}'.format(
+            self.name, self.fullness)
+
+    def sleep(self):
+        self.fullness -= 5
+
+    def walk(self):
+        self.fullness -= 10
+        self.house.dirt += 10
+
+    def eat(self):
+        self.fullness += 20
+        self.house.pug_food -= 20
+
+    def poop(self):
+        self.fullness -= 5
+        self.house.dirt += 10
+
+    def act(self):
+        if self.fullness <= 0:
+            cprint('{} мопс умер...'.format(self.name), color='red')
+            return
+        dice = randint(1, 6)
+        if self.fullness < 10:
+            self.eat()
+            k = 0
+            k += 1
+            if k % 2 == 0:
+                self.poop()
+        elif dice == 1:
+            cprint('{} Леонид Васильевич покушал'.format(self.name))
+            self.eat()
+        elif dice == 2:
+            cprint('{} Леонид Васильевич покушал'.format(self.name))
+            self.sleep()
+        elif dice == 3:
+            cprint('{} Леонид Васильевич погулял'.format(self.name))
+            self.walk()
+        elif dice == 4:
+            cprint('{} Леонид Васильевич покушал'.format(self.name))
+            self.sleep()
+        elif dice == 5:
+            cprint('{} Леонид Васильевич погулял'.format(self.name))
+            self.walk()
+        elif dice == 5:
+            cprint('{} Леонид Васильевич сделал пупи'.format(self.name))
+            self.poop()
 
 
 vasya = Man(name='Вася')
 my_sweet_home = House()
 vasya.move_into_the_house(house=my_sweet_home)
+vasya.pick_up_the_pug(house=my_sweet_home)
+vasya.buy_food_for_pug()
 
-for day in range(1, 366):
+for day in range(1, 21):
     cprint('=================== день {} ==================='.format(day), color='yellow')
     vasya.act()
+    pug.act()
     cprint('------------------в конце дня--------------------'.format(day))
     print(vasya)
+    print(pug)
     print(my_sweet_home)
 
 # Усложненное задание (делать по желанию)
