@@ -72,6 +72,8 @@ class Man:
         dice = randint(1, 6)
         if self.fullness < 20:
             self.eat()
+        if self.house.pug_food <= 20:
+            self.buy_food_for_pug()
         elif self.house.food < 10:
             self.shopping()
         elif self.house.money < 50:
@@ -131,8 +133,11 @@ class Pug:
         self.house.dirt += 10
 
     def eat(self):
-        self.fullness += 20
-        self.house.pug_food -= 20
+        if self.house.pug_food >= 20:
+            self.fullness += 20
+            self.house.pug_food -= 20
+        else:
+            cprint('Нет еды у мопса', color='red')
 
     def poop(self):
         self.fullness -= 5
@@ -142,30 +147,31 @@ class Pug:
         if self.fullness <= 0:
             cprint('{} мопс умер...'.format(self.name), color='red')
             return
+
         dice = randint(1, 6)
-        if self.fullness < 10:
+        if self.fullness < 20:
             self.eat()
             k = 0
             k += 1
             if k % 2 == 0:
                 self.poop()
         elif dice == 1:
-            cprint('{} Леонид Васильевич покушал'.format(self.name))
+            cprint('{} покушал'.format(self.name))
             self.eat()
         elif dice == 2:
-            cprint('{} Леонид Васильевич покушал'.format(self.name))
+            cprint('{} вздремнул'.format(self.name))
             self.sleep()
         elif dice == 3:
-            cprint('{} Леонид Васильевич погулял'.format(self.name))
+            cprint('{} погулял'.format(self.name))
             self.walk()
         elif dice == 4:
-            cprint('{} Леонид Васильевич покушал'.format(self.name))
+            cprint('{} покушал'.format(self.name))
             self.sleep()
         elif dice == 5:
-            cprint('{} Леонид Васильевич погулял'.format(self.name))
+            cprint('{} погулял'.format(self.name))
             self.walk()
-        elif dice == 5:
-            cprint('{} Леонид Васильевич сделал пупи'.format(self.name))
+        elif dice == 6:
+            cprint('{} сделал пупи'.format(self.name))
             self.poop()
 
 
@@ -175,7 +181,7 @@ vasya.move_into_the_house(house=my_sweet_home)
 vasya.pick_up_the_pug(house=my_sweet_home)
 vasya.buy_food_for_pug()
 
-for day in range(1, 21):
+for day in range(1, 365):
     cprint('=================== день {} ==================='.format(day), color='yellow')
     vasya.act()
     pug.act()
